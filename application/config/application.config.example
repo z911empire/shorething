@@ -1,0 +1,7 @@
+config_base_url=baseurl
+config_index_page=index.php
+route_default_controller=defaultcontroller
+db_default_hostname=hostname
+db_default_username=username
+db_default_password=password
+db_default_database=database
