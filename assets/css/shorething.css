@@ -1,0 +1,5 @@
+.table td { vertical-align:middle; }
+
+.btn-file, a.fileupload-exists {
+	padding:3px 14px;
+}

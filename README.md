@@ -11,4 +11,6 @@ Steve Moncada
 Future Releases
 ---------------
 
+- Alpha: 
+  - 9/3/12: add assignments (no validation), student entrance, delete assignments 
 - Beta: More robust user account controls, better cosmetics

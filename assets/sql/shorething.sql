@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 21, 2012 at 11:06 PM
+-- Generation Time: Sep 03, 2012 at 04:52 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -27,12 +27,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `assignment` (
-  `id` int(8) NOT NULL,
+  `id` int(8) NOT NULL AUTO_INCREMENT,
   `label` varchar(256) NOT NULL,
   `filepath` varchar(256) NOT NULL,
   `class_id` int(4) NOT NULL,
+  `teacher_id` int(4) NOT NULL,
+  `submitted` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -45,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `class` (
   `label` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `label` (`label`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -75,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `student` (
   `exp1` varchar(64) DEFAULT NULL,
   `exp2` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -90,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   `password` varchar(256) NOT NULL,
   `class_id` int(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

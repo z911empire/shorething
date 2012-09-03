@@ -7,26 +7,76 @@ class Teachers extends CI_Controller {
 	}
 
 	public function index() {
-		if ($this->session->userdata('logged_in')) {
-			$data['firstname'] 	= $this->session->userdata('firstname');
-			$data['lastname'] 	= $this->session->userdata('lastname');			
-			
-			$data['classes']	= $this->_loadClasses($this->session->userdata('id'));
-			$this->load->view('v_header',array('title'=>'Shorething Teacher\'s Page'));
+		$data=array();
+		$data['title']		= 'Shorething Teacher\'s Page';
+
+		$this->_populateBasicData($data);
+		
+		$this->_drawIndexView($data);
+	}
+		# do basic user auth and start populating $data
+		private function _populateBasicData(&$data) {
+			if ($this->session->userdata('logged_in')) {
+				$data['firstname'] 	= $this->session->userdata('firstname');
+				$data['lastname'] 	= $this->session->userdata('lastname');			
+				$data['classes']	= $this->_loadClasses($this->session->userdata('id'));
+				$data['assignments']= $this->_loadAssignments($this->session->userdata('id'));
+			} else {
+				redirect('teachers/entrance','refresh');	
+			}
+		}
+			# get classes (and id's) for this teacher
+			private function _loadClasses($teacher_id) {
+				$sql	= "SELECT t.class_id, c.label FROM teacher t, class c WHERE t.id=$teacher_id AND c.id=t.class_id;";
+				$query 	= $this->db->query($sql);
+				$row	= $query->row();
+				return array('id'=>$row->class_id, 'label'=>$row->label);
+			}
+			# get assignments for this teacher
+			private function _loadAssignments($teacher_id) {
+				$sql	= "SELECT a.id, a.label, a.filepath, a.submitted, t.firstname, t.lastname FROM teacher t, assignment a WHERE a.teacher_id=t.id AND t.id=$teacher_id ORDER BY a.submitted DESC LIMIT 10;";
+				return $this->db->query($sql);
+			}
+				
+		# draw the views
+		private function _drawIndexView($data) {
+			$this->load->view('v_header', $data);
 			$this->load->view('v_teachers', $data);
 			$this->load->view('v_footer');
+		}
+	
+	# teachers/engine (INTERNAL USE: PROCESS TEACHER ACTIONS)
+	public function engine() {
+		$this->load->model('assignment','',TRUE);
+		$this->load->library('form_validation');
+	
+		$config['upload_path'] 		= './upload/';
+		$config['allowed_types'] 	= 'pdf|doc|xls|ppt|txt|jpeg|jpg|bmp|gif|png';
+		# $config['max_size'] 		= 0; # 0 = no limit, defined in web server config (php.ini)
+		$this->load->library('upload',$config);
+		
+		$class_id 				= $this->input->post('class_id');
+		$assignment_label 		= $this->input->post('assignment_label');
+		$teacher_id				= $this->session->userdata('id');
+		
+		$this->form_validation->set_rules('assignment_label', 'Assignment Name', 'trim|required|xss_clean');
+		
+		# validate the label and class
+		if ($this->form_validation->run() == FALSE) {
+			echo validation_errors();
+		# validate the upload
+		} else if (!$this->upload->do_upload("assignment_filepath")) {
+			print_r($this->upload->display_errors());
+		# success, insert the records into the database
 		} else {
-			redirect('teachers/entrance','refresh');	
+			$upload_data = $this->upload->data();
+			$this->assignment->add_assignment($assignment_label,$upload_data['file_name'],$class_id,$teacher_id);
+			redirect('teachers','refresh');	
 		}
+		
 	}
-	
-		private function _loadClasses($teacher_id) {
-			$sql	= "SELECT t.class_id, c.label FROM teacher t, class c WHERE t.id=$teacher_id AND c.id=t.class_id;";
-			$query 	= $this->db->query($sql);
-			$row	= $query->row();
-			return array('id'=>$row->class_id, 'label'=>$row->label);
-		}
-	
+
+	# teachers/entrance (TEACHER LOGIN PAGE)
 	public function entrance() {
 		$this->load->library('form_validation');
 		$this->_entranceViews();
