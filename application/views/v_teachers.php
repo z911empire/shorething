@@ -3,7 +3,7 @@
     	<div class="navbar-inner">
         	<a class="brand" href="#"><?php echo "$firstname $lastname"; ?></a>
             <ul class="nav pull-right">
-        		<li><a href="teachers/logout">Logout</a></li>
+        		<li><a href="teachers/logout"><i class="icon-off"></i> Logout</a></li>
 	        </ul>
         </div>
     </div>

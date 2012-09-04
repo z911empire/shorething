@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 03, 2012 at 04:52 PM
+-- Generation Time: Sep 03, 2012 at 10:08 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -31,10 +31,9 @@ CREATE TABLE IF NOT EXISTS `assignment` (
   `label` varchar(256) NOT NULL,
   `filepath` varchar(256) NOT NULL,
   `class_id` int(4) NOT NULL,
-  `teacher_id` int(4) NOT NULL,
   `submitted` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -43,6 +42,19 @@ CREATE TABLE IF NOT EXISTS `assignment` (
 --
 
 CREATE TABLE IF NOT EXISTS `class` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `course_id` int(4) NOT NULL,
+  `teacher_id` int(4) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course`
+--
+
+CREATE TABLE IF NOT EXISTS `course` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `label` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
@@ -73,11 +85,20 @@ CREATE TABLE IF NOT EXISTS `student` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `firstname` varchar(32) NOT NULL,
   `lastname` varchar(32) NOT NULL,
-  `password` varchar(256) DEFAULT NULL,
-  `exp1` varchar(64) DEFAULT NULL,
-  `exp2` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_class`
+--
+
+CREATE TABLE IF NOT EXISTS `student_class` (
+  `student_id` int(4) NOT NULL,
+  `class_id` int(4) NOT NULL,
+  PRIMARY KEY (`student_id`,`class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -90,7 +111,7 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   `firstname` varchar(32) NOT NULL,
   `lastname` varchar(32) NOT NULL,
   `password` varchar(256) NOT NULL,
-  `class_id` int(4) NOT NULL,
+  `gender` varchar(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
