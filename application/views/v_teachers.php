@@ -1,12 +1,12 @@
-<div class="container">
-	<div class="navbar navbar-static-top">
-    	<div class="navbar-inner">
-        	<a class="brand" href="#"><?php echo "$firstname $lastname"; ?></a>
-            <ul class="nav pull-right">
-        		<li><a href="teachers/logout"><i class="icon-off"></i> Logout</a></li>
-	        </ul>
-        </div>
+<div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+        <a class="brand" href="#"><?php echo "$firstname $lastname"; ?></a>
+        <ul class="nav pull-right">
+            <li><a href="teachers/logout"><i class="icon-off"></i> Logout</a></li>
+        </ul>
     </div>
+</div>
+<div class="container">    
 	<div class="row">
 		<div class="span12">
 			<h1>Shorething<br/><small>Teacher's Page</small></h1>
