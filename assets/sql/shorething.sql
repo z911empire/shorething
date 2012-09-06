@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 05, 2012 at 10:51 PM
+-- Generation Time: Sep 05, 2012 at 11:58 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS `course` (
 CREATE TABLE IF NOT EXISTS `metric` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `type` int(1) NOT NULL,
-  `value` varchar(32) DEFAULT NULL,
+  `valueA` varchar(256) DEFAULT NULL,
+  `valueB` varchar(256) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

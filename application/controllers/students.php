@@ -76,31 +76,30 @@ class Students extends CI_Controller {
 	
 	# students/entrance (STUDENT LOGIN PAGE)
 	public function entrance() {
-		$this->load->library('form_validation');
-		
-		$data['site_name']			= $this->config->item('site_name');
-		$data['site_tagline']		= $this->config->item('site_tagline');
-		$data['title']				= $data['site_name'].': Student\'s Entrance';
-		$data['links']				= array();
-		
-		# get links from the database table 'sitesetting'
-		$sql= 	"SELECT ss.valueA AS 'linkurl', ss.valueB AS 'linklabel' ".
-				"FROM sitesetting ss ".
-				"WHERE ss.type=1 ".
-				"ORDER BY ss.id;";
-		$result	= $this->db->query($sql);
-		
-		foreach ($result->result() as $row) {
-			array_push($data['links'],
-				array('linkurl'				=>$row->linkurl, 
-					  'linklabel'			=>$row->linklabel)
-			);
-		}
-		
-		$this->_entranceViews($data);
+		$this->load->library('form_validation');		
+		$this->_entranceViews();
 	}
 
-		private function _entranceViews($data) {
+		private function _entranceViews() {
+			$data['site_name']			= $this->config->item('site_name');
+			$data['site_tagline']		= $this->config->item('site_tagline');
+			$data['title']				= $data['site_name'].': Student\'s Entrance';
+			$data['links']				= array();
+			
+			# get links from the database table 'sitesetting'
+			$sql= 	"SELECT ss.valueA AS 'linkurl', ss.valueB AS 'linklabel' ".
+					"FROM sitesetting ss ".
+					"WHERE ss.type=1 ".
+					"ORDER BY ss.id;";
+			$result	= $this->db->query($sql);
+			
+			foreach ($result->result() as $row) {
+				array_push($data['links'],
+					array('linkurl'				=>$row->linkurl, 
+						  'linklabel'			=>$row->linklabel)
+				);
+			}
+			
 			$this->load->view('v_header',$data);
 			$this->load->view('v_studentslogin');
 			$this->load->view('v_footer');				
@@ -113,6 +112,7 @@ class Students extends CI_Controller {
 		$this->form_validation->set_rules('fullname', 'Full Name', 'trim|required|xss_clean|callback_check_database');
 
 		if($this->form_validation->run() == FALSE) {
+			
 			$this->_entranceViews(); // Field validation failed.
 		} else {
 			redirect('students', 'refresh'); // Go to private students area

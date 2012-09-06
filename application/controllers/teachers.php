@@ -81,13 +81,14 @@ class Teachers extends CI_Controller {
 	# teachers/entrance (TEACHER LOGIN PAGE)
 	public function entrance() {
 		$this->load->library('form_validation');
-		$data['site_name']			= $this->config->item('site_name');
-		$data['site_tagline']		= $this->config->item('site_tagline');
-		$data['title']				= $data['site_name'].': Teacher\'s Entrance';
-		$this->_entranceViews($data);
+		$this->_entranceViews();
 	}
 
-		private function _entranceViews($data) {
+		private function _entranceViews() {
+			$data['site_name']			= $this->config->item('site_name');
+			$data['site_tagline']		= $this->config->item('site_tagline');
+			$data['title']				= $data['site_name'].': Teacher\'s Entrance';
+			
 			$this->load->view('v_header',$data);
 			$this->load->view('v_teacherslogin');
 			$this->load->view('v_footer');				
