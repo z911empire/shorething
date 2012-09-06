@@ -4,6 +4,15 @@ include_once "config_helper.php";
 $userconfig=readConfigs("application.config");
 
 /*
+|----------------------
+| Site Data
+|----------------------
+*/
+
+$config['site_name'] 		= $userconfig['config_site_name'];
+$config['site_tagline'] 	= $userconfig['config_site_tagline'];
+
+/*
 |--------------------------------------------------------------------------
 | Base Site URL
 |--------------------------------------------------------------------------

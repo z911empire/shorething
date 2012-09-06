@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             <div class="span11 offset1">
-                <h1>Shorething</h1>
-                <h3>School Name 7th Grade Assignments</h3>
+                <h1><?php echo $site_name ?></h1>
+                <h3><?php echo $site_tagline ?></h3>
             </div>
         </div>
     </div>
@@ -28,8 +28,8 @@
 
 <div class="container">
 	<div class="row entrancelinks">
-    	<div class="span4"><a>LINK 1</a></div>
-		<div class="span4"><a>LINK 2</a></div>
-        <div class="span4"><a>LINK 3</a></div>
+    	<?php foreach ($links as $link) { 
+    	echo "<div class='span4 pull-right'><a target='_blank' href='".$link['linkurl']."'>".$link['linklabel']."</a></div>";
+		} ?>
     </div>
 </div>

@@ -9,12 +9,18 @@
 <div class="container">
     <div class="row">
 		<div class="span12">
-			<h1>Shorething<br/><small><?php echo "$firstname $lastname"; ?>'s Assignments</small></h1>
+			<h1><?php echo $site_name; ?><br/><small><?php echo "$firstname $lastname"; ?>'s Assignments</small></h1>
 		</div>
 	</div>
 	<div class="row">
-    	<?php foreach ($all_classes as $class) { ?>
-            <div class="span4">
+    	<?php 
+		$numclasses	=	count($all_classes);
+		$modnum		=	$numclasses % 3;
+		$spansize 	=	($modnum==1) ? 6 : 4;
+		$colperrow	=	($modnum==1) ? 2 : 3;
+		$i=0;
+		foreach ($all_classes as $class) { ?>
+            <div class="span<?php echo $spansize; ?>">
                 <table class="table table-striped table-bordered">
                     <thead>
                     	<tr><th colspan="2"><?php echo $class['course_label']; ?> &middot; 
@@ -22,14 +28,19 @@
                     </thead>
                     <tbody>
                     	<?php foreach ($all_assignments[$class['class_id']] as $assignment) {
-                            echo "<tr><td><a class='btn btn-small' href='upload/".$assignment['assignment_filepath']."'>";
-							echo "<i class='icon-file'></i></a></td>";
-							echo "<td><a href='upload/".$assignment['assignment_filepath']."'>";
-							echo $assignment['assignment_label']."</a></td></tr>";
-                        } ?>
+								echo "<tr><td><a class='btn btn-small' href='upload/".$assignment['assignment_filepath']."'>";
+								echo "<i class='icon-file'></i></a></td>";
+								echo "<td><a href='upload/".$assignment['assignment_filepath']."'>";
+								echo $assignment['assignment_label']."</a></td></tr>";
+                        	} ?>
                     </tbody>
                 </table>
             </div>
-        <?php } ?>
-	</div>    
+        <?php 
+			$i++;
+			if ($i % $colperrow == 0 && $i!=$numclasses) {
+				echo "</div><div class='row'>";
+			}
+		} ?>  
+	</div>
 </div>

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 03, 2012 at 10:08 PM
+-- Generation Time: Sep 05, 2012 at 10:51 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `assignment` (
   `class_id` int(4) NOT NULL,
   `submitted` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `class` (
   `course_id` int(4) NOT NULL,
   `teacher_id` int(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `course` (
   `label` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `label` (`label`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -73,7 +73,22 @@ CREATE TABLE IF NOT EXISTS `metric` (
   `value` varchar(32) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sitesetting`
+--
+
+CREATE TABLE IF NOT EXISTS `sitesetting` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `type` int(2) NOT NULL,
+  `valueA` varchar(256) NOT NULL,
+  `valueB` varchar(256) DEFAULT NULL,
+  `valueC` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -86,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `student` (
   `firstname` varchar(32) NOT NULL,
   `lastname` varchar(32) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -113,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   `password` varchar(256) NOT NULL,
   `gender` varchar(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -9,7 +9,7 @@
 <div class="container">    
 	<div class="row">
 		<div class="span12">
-			<h1>Shorething<br/><small>Teacher's Page</small></h1>
+			<h1><?php echo $site_name; ?><br/><small>Teacher's Page</small></h1>
 		</div>
 	</div>
 	<div class="row">

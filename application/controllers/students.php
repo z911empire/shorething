@@ -7,8 +7,9 @@ class Students extends CI_Controller {
 	}
 
 	public function index() {
-		$data=array();
-		$data['title']		= 'Shorething Student\'s Page';
+		$data['site_name']			= $this->config->item('site_name');
+		$data['site_tagline']		= $this->config->item('site_tagline');		
+		$data['title']				= $data['site_name'].': Student\'s Entrance';
 
 		$this->_populateBasicData($data);
 		
@@ -16,7 +17,7 @@ class Students extends CI_Controller {
 	}
 		# do basic user auth and start populating $data
 		private function _populateBasicData(&$data) {
-			if ($this->session->userdata('logged_in')) {
+			if ($this->session->userdata('logged_in')) {			
 				$data['firstname'] 			= $this->session->userdata('firstname');
 				$data['lastname'] 			= $this->session->userdata('lastname');			
 				$data['all_classes']		= $this->_loadAllClasses($this->session->userdata('id'));
@@ -76,11 +77,31 @@ class Students extends CI_Controller {
 	# students/entrance (STUDENT LOGIN PAGE)
 	public function entrance() {
 		$this->load->library('form_validation');
-		$this->_entranceViews();
+		
+		$data['site_name']			= $this->config->item('site_name');
+		$data['site_tagline']		= $this->config->item('site_tagline');
+		$data['title']				= $data['site_name'].': Student\'s Entrance';
+		$data['links']				= array();
+		
+		# get links from the database table 'sitesetting'
+		$sql= 	"SELECT ss.valueA AS 'linkurl', ss.valueB AS 'linklabel' ".
+				"FROM sitesetting ss ".
+				"WHERE ss.type=1 ".
+				"ORDER BY ss.id;";
+		$result	= $this->db->query($sql);
+		
+		foreach ($result->result() as $row) {
+			array_push($data['links'],
+				array('linkurl'				=>$row->linkurl, 
+					  'linklabel'			=>$row->linklabel)
+			);
+		}
+		
+		$this->_entranceViews($data);
 	}
 
-		private function _entranceViews() {
-			$this->load->view('v_header',array('title'=>'Shorething Student\'s Entrance'));
+		private function _entranceViews($data) {
+			$this->load->view('v_header',$data);
 			$this->load->view('v_studentslogin');
 			$this->load->view('v_footer');				
 		}
@@ -90,7 +111,6 @@ class Students extends CI_Controller {
 		$this->load->library('form_validation');
 		
 		$this->form_validation->set_rules('fullname', 'Full Name', 'trim|required|xss_clean|callback_check_database');
-   		#$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_check_database');
 
 		if($this->form_validation->run() == FALSE) {
 			$this->_entranceViews(); // Field validation failed.
