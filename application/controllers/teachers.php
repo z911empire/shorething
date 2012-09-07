@@ -11,19 +11,19 @@ class Teachers extends CI_Controller {
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': Teacher\'s Entrance';
 		
-		$data['title']		= 'Shorething Teacher\'s Page';
-
-		$this->_populateBasicData($data);
+		$this->_populateBasicData($data, true);
 		
 		$this->_drawIndexView($data);
 	}
 		# do basic user auth and start populating $data
-		private function _populateBasicData(&$data) {
+		private function _populateBasicData(&$data, $bulk) {
 			if ($this->session->userdata('logged_in')) {
 				$data['firstname'] 	= $this->session->userdata('firstname');
 				$data['lastname'] 	= $this->session->userdata('lastname');			
-				$data['classes']	= $this->_loadClasses($this->session->userdata('id'));
-				$data['assignments']= $this->_loadAssignments($this->session->userdata('id'));
+				if ($bulk) {
+					$data['classes']	= $this->_loadClasses($this->session->userdata('id'));
+					$data['assignments']= $this->_loadAssignments($this->session->userdata('id'));
+				}
 			} else {
 				redirect('teachers/entrance','refresh');	
 			}
@@ -37,7 +37,7 @@ class Teachers extends CI_Controller {
 			}
 			# get assignments for this teacher
 			private function _loadAssignments($teacher_id) {
-				$sql	= "SELECT a.id, a.label, a.filepath, a.submitted, t.firstname, t.lastname FROM class c, teacher t, assignment a WHERE a.class_id=c.id AND t.id=$teacher_id AND c.teacher_id=t.id ORDER BY a.submitted DESC LIMIT 10;";
+				$sql	= "SELECT a.id, a.label, a.filepath, DATE_ADD(a.submitted, INTERVAL ".$this->config->item('time_add')." HOUR) AS submitted, t.firstname, t.lastname FROM class c, teacher t, assignment a WHERE a.class_id=c.id AND t.id=$teacher_id AND c.teacher_id=t.id ORDER BY a.submitted DESC LIMIT 10;";
 				return $this->db->query($sql);
 			}
 				
@@ -47,35 +47,73 @@ class Teachers extends CI_Controller {
 			$this->load->view('v_teachers', $data);
 			$this->load->view('v_footer');
 		}
+
+	public function assignments($action, $id) { 
+		$data['site_name']			= $this->config->item('site_name');
+		$data['site_tagline']		= $this->config->item('site_tagline');		
+		$data['title']				= $data['site_name'].': '.ucfirst($action).' Assignment';
+		$data['action']				= $action;
+		
+		# MODIFY | DELETE - only one at a time for now
+		$this->load->model('assignment','',TRUE);	
+		$data['assignment']		= $this->assignment->get_assignment($id);
+		
+		$this->_populateBasicData($data, true);
+		
+		$this->_drawAssignmentView($data);
+	}
 	
+		# draw the views
+		private function _drawAssignmentView($data) {
+			$this->load->view('v_header', $data);
+			$this->load->view('v_assignments', $data);
+			$this->load->view('v_footer');
+		}
+
 	# teachers/engine (INTERNAL USE: PROCESS TEACHER ACTIONS)
 	public function engine() {
 		$this->load->model('assignment','',TRUE);
 		$this->load->library('form_validation');
-	
-		$config['upload_path'] 		= './upload/';
-		$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|txt|jpeg|jpg|bmp|gif|png';
-		# $config['max_size'] 		= 0; # 0 = no limit, defined in web server config (php.ini)
-		$this->load->library('upload',$config);
-		
+
 		$class_id 				= $this->input->post('class_id');
 		$assignment_label 		= $this->input->post('assignment_label');
-		
 		$this->form_validation->set_rules('assignment_label', 'Assignment Name', 'trim|required|xss_clean');
-		
+
 		# validate the label and class
 		if ($this->form_validation->run() == FALSE) {
 			echo validation_errors();
-		# validate the upload
-		} else if (!$this->upload->do_upload("assignment_filepath")) {
-			print_r($this->upload->display_errors());
-		# success, insert the records into the database
-		} else {
-			$upload_data = $this->upload->data();
+		} 
+
+		switch ($this->input->post('action')) {
+		case "modify":
+			$assignment_id		 	= $this->input->post('assignment_id');	
+			$assignment_filepath 	= $this->input->post('filepath');
+			$this->assignment->update_assignment($assignment_id,$assignment_label,$assignment_filepath,$class_id);
+			redirect('teachers','refresh');	
+		break;
+		case "delete":
+			$assignment_id		 	= $this->input->post('assignment_id');
+			$assignment_filepath 	= $this->input->post('filepath');
+			$this->assignment->delete_assignment($assignment_id);
+			if (!unlink("upload/".$assignment_filepath)) {
+				error_log("File already gone.",0);
+			}
+			redirect('teachers','refresh');
+		break;
+		default: # default is an add
+			$config['upload_path'] 		= './upload/';
+			$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|txt|jpeg|jpg|bmp|gif|png';
+			# $config['max_size'] 		= 0; # 0 = no limit, defined in web server config (php.ini)
+	
+			$this->load->library('upload',$config);
+			if (!$this->upload->do_upload("assignment_filepath")) {
+				print_r($this->upload->display_errors());
+			} 
+	
+			$upload_data = $this->upload->data();	
 			$this->assignment->add_assignment($assignment_label,$upload_data['file_name'],$class_id);
 			redirect('teachers','refresh');	
-		}
-		
+		}	
 	}
 
 	# teachers/entrance (TEACHER LOGIN PAGE)

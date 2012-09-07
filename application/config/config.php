@@ -11,6 +11,7 @@ $userconfig=readConfigs("application.config");
 
 $config['site_name'] 		= $userconfig['config_site_name'];
 $config['site_tagline'] 	= $userconfig['config_site_tagline'];
+$config['time_add'] 		= $userconfig['config_time_add'];
 
 /*
 |--------------------------------------------------------------------------

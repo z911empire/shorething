@@ -3,6 +3,7 @@ config_index_page=index.php (leave blank for index-less)
 config_encryption_key=http://randomkeygen.com/
 config_site_name=sitename
 config_site_tagline=site tagline
+config_time_add=#
 route_default_controller=defaultcontroller
 db_default_hostname=hostname
 db_default_username=username

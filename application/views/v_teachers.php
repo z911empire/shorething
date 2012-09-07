@@ -50,9 +50,13 @@
                 <tbody>
                 <?php
                     foreach ($assignments->result() as $row) {
-                        echo "<tr><td><a class='btn btn-small' href='upload/".$row->filepath."'><i class='icon-search'></i></a></td>";
+                        echo "<tr><td class='span2'>";
+						echo "<a class='btn btn-small' href='upload/".$row->filepath."'><i class='icon-search'></i></a> ";
+						echo "<a class='btn btn-small' href='teachers/assignments/modify/".$row->id."'><i class='icon-pencil'></i></a> ";
+						echo "<a class='btn btn-small' href='teachers/assignments/delete/".$row->id."'><i class='icon-trash'></i></a>";
+						#echo "<a class='btn btn-small' href=''><i class='icon-search'></i></a>";
 						echo "<td>".$row->label."</td>";
-                        echo "<td>".date('l, m/d/Y g:i A',strtotime($row->submitted))."</td></tr>";
+                        echo "<td class='span2'><small>".date('l, m/d/Y g:i A',strtotime($row->submitted))."</small></td></tr>";
                     }
                 ?>	
                 </tbody>
