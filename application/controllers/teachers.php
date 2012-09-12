@@ -102,7 +102,7 @@ class Teachers extends CI_Controller {
 		break;
 		default: # default is an add
 			$config['upload_path'] 		= './upload/';
-			$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|txt|jpeg|jpg|bmp|gif|png';
+			$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|pptx|txt|jpeg|jpg|bmp|gif|png';
 			# $config['max_size'] 		= 0; # 0 = no limit, defined in web server config (php.ini)
 	
 			$this->load->library('upload',$config);
