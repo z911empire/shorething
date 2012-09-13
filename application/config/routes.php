@@ -43,6 +43,7 @@ $userconfig=readConfigs("application.config");
 */
 
 $route['default_controller'] = $userconfig['route_default_controller'];
+$route['teachers/assignments'] = "teachers";
 $route['404_override'] = '';
 
 /* End of file routes.php */

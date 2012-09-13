@@ -6,6 +6,8 @@ class Teachers extends CI_Controller {
 		parent::__construct();
 	}
 
+
+	# /TEACHERS
 	public function index() {
 		$data['site_name']			= $this->config->item('site_name');
 		$data['site_tagline']		= $this->config->item('site_tagline');		
@@ -48,15 +50,83 @@ class Teachers extends CI_Controller {
 			$this->load->view('v_footer');
 		}
 
-	public function assignments($action, $id) { 
+	# /TEACHERS/ENTRANCE (TEACHER LOGIN PAGE)
+	public function entrance() {
+		$this->load->library('form_validation');
+		$this->_entranceViews();
+	}
+
+		private function _entranceViews() {
+			$data['site_name']			= $this->config->item('site_name');
+			$data['site_tagline']		= $this->config->item('site_tagline');
+			$data['title']				= $data['site_name'].': Teacher\'s Entrance';
+			
+			$this->load->view('v_header',$data);
+			$this->load->view('v_teacherslogin');
+			$this->load->view('v_footer');				
+		}
+
+/************************************
+*            AUTHENTICATION
+*************************************/
+
+	public function verifylogin() {
+		$this->load->model('teacher','',TRUE);
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_rules('fullname', 'Full Name', 'trim|required|xss_clean');
+   		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_check_database');
+
+		if($this->form_validation->run() == FALSE) {
+			$this->_entranceViews(); // Field validation failed.
+		} else {
+			redirect('teachers', 'refresh'); // Go to private teachers area
+		}
+	}
+	
+	public function logout() {
+		$this->session->set_userdata('logged_in',false);
+		$this->session->sess_destroy();
+		redirect('teachers/entrance','refresh');	
+	}
+	
+	public function check_database($password) {
+		$fullname = $this->input->post('fullname');
+		$result = $this->teacher->login($fullname, $password);
+		if ($result) {
+			$sess_array = array();
+			foreach ($result as $row) {
+				$sess_array = array(
+					'id'		=> $row->id,
+					'firstname'	=> $row->firstname,
+					'lastname'	=> $row->lastname,				
+					'gender'	=> $row->gender,
+					'logged_in'	=> true
+				);
+			}
+			$this->session->set_userdata($sess_array);
+			return true;
+		} else {
+			$this->form_validation->set_message('check_database', 'Invalid username or password');
+			return false;
+		}
+	}
+
+/************************************
+*            ASSIGNMENTS
+*************************************/
+
+	public function assignments($action, $id=-1) { 
 		$data['site_name']			= $this->config->item('site_name');
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': '.ucfirst($action).' Assignment';
 		$data['action']				= $action;
 		
-		# MODIFY | DELETE - only one at a time for now
-		$this->load->model('assignment','',TRUE);	
-		$data['assignment']		= $this->assignment->get_assignment($id);
+		if ($action!="add") {
+			# MODIFY | DELETE - only one at a time for now
+			$this->load->model('assignment','',TRUE);	
+			$data['assignment']		= $this->assignment->get_assignment($id);
+		} 
 		
 		$this->_populateBasicData($data, true);
 		
@@ -70,7 +140,7 @@ class Teachers extends CI_Controller {
 			$this->load->view('v_footer');
 		}
 
-	# teachers/engine (INTERNAL USE: PROCESS TEACHER ACTIONS)
+	# /TEACHERS/ENGINE (INTERNAL USE: PROCESS TEACHER ACTIONS)
 	public function engine() {
 		$this->load->model('assignment','',TRUE);
 		$this->load->library('form_validation');
@@ -115,63 +185,6 @@ class Teachers extends CI_Controller {
 			redirect('teachers','refresh');	
 		}	
 	}
-
-	# teachers/entrance (TEACHER LOGIN PAGE)
-	public function entrance() {
-		$this->load->library('form_validation');
-		$this->_entranceViews();
-	}
-
-		private function _entranceViews() {
-			$data['site_name']			= $this->config->item('site_name');
-			$data['site_tagline']		= $this->config->item('site_tagline');
-			$data['title']				= $data['site_name'].': Teacher\'s Entrance';
-			
-			$this->load->view('v_header',$data);
-			$this->load->view('v_teacherslogin');
-			$this->load->view('v_footer');				
-		}
-
-	public function verifylogin() {
-		$this->load->model('teacher','',TRUE);
-		$this->load->library('form_validation');
-		
-		$this->form_validation->set_rules('fullname', 'Full Name', 'trim|required|xss_clean');
-   		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_check_database');
-
-		if($this->form_validation->run() == FALSE) {
-			$this->_entranceViews(); // Field validation failed.
-		} else {
-			redirect('teachers', 'refresh'); // Go to private teachers area
-		}
-	}
 	
-	public function logout() {
-		$this->session->set_userdata('logged_in',false);
-		$this->session->sess_destroy();
-		redirect('teachers/entrance','refresh');	
-	}
-	
-	public function check_database($password) {
-		$fullname = $this->input->post('fullname');
-		$result = $this->teacher->login($fullname, $password);
-		if ($result) {
-			$sess_array = array();
-			foreach ($result as $row) {
-				$sess_array = array(
-					'id'		=> $row->id,
-					'firstname'	=> $row->firstname,
-					'lastname'	=> $row->lastname,				
-					'gender'	=> $row->gender,
-					'logged_in'	=> true
-				);
-			}
-			$this->session->set_userdata($sess_array);
-			return true;
-		} else {
-			$this->form_validation->set_message('check_database', 'Invalid username or password');
-			return false;
-		}
-	}
 }
 ?>
