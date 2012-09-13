@@ -18,14 +18,18 @@
                 </thead>
                 <tbody>
                 <?php
-                    foreach ($assignments->result() as $row) {
+                    foreach ($assignments as $row) {
                         echo "<tr><td class='span3'>";
-						echo "<a class='btn btn-small' href='".base_url("upload/".$row->filepath)."'><i class='icon-search'></i></a> ";
-						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/modify/".$row->id)."'><i class='icon-pencil'></i></a> ";
-						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/delete/".$row->id)."'><i class='icon-trash'></i></a>";
-						echo "<td>".$row->label."</td>";
-						echo "<td>&nbsp;</tb>";
-                        echo "<td class='span2'><small>".date('l, m/d/Y g:i A',strtotime($row->submitted))."</small></td></tr>";
+						echo "<a class='btn btn-small' href='".base_url("upload/".$row['filepath'])."'><i class='icon-search'></i></a> ";
+						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/modify/".$row['id'])."'><i class='icon-pencil'></i></a> ";
+						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/delete/".$row['id'])."'><i class='icon-trash'></i></a>";
+						echo "<td>".$row['label']."</td>";
+						echo "<td class='span2'>";
+						foreach ($row['folders']->result() as $folder) {
+							echo "<span class='label label-info'>".$folder->label."</span> ";	
+						}
+						echo "</td>";
+                        echo "<td class='span2'><small>".date('l, m/d/Y g:i A',strtotime($row['submitted']))."</small></td></tr>";
                     }
                 ?>	
                 </tbody>

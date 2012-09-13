@@ -23,7 +23,7 @@
         ?>
         </ul>
         <ul class="nav pull-right">
-            <li><a href="teachers/logout"><i class="icon-off"></i> Logout</a></li>
+            <li><a href="<?php echo base_url("teachers/logout"); ?>"><i class="icon-off"></i> Logout</a></li>
         </ul>
     </div>
 </div>

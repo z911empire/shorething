@@ -28,7 +28,7 @@ class Folder extends CI_Model {
 	
 	function delete_folder($id) {
 		$this->db->delete('folder',array('id'=>$id));
-		$this->db->delete('folder_assignment',array('folder_id'=>$id));
+		$this->db->delete('folder_assignment',array('folder_id'=>$id)); # cascade on delete, no?
 	}
 }
 ?>

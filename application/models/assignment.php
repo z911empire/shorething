@@ -36,6 +36,7 @@ class Assignment extends CI_Model {
 	
 	function delete_assignment($id) {
 		$this->db->delete('assignment',array('id'=>$id));
+		$this->db->delete('folder_assignment',array('assignment_id'=>$id)); # cascade on delete no?
 	}
 }
 ?>

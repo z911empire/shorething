@@ -42,8 +42,15 @@ class Teachers extends CI_Controller {
 			}
 			# get assignments for this teacher
 			private function _loadAssignments($teacher_id) {
+				$response=array();
 				$sql	= "SELECT a.id, a.label, a.filepath, DATE_ADD(a.submitted, INTERVAL ".$this->config->item('time_add')." HOUR) AS submitted, t.firstname, t.lastname FROM class c, teacher t, assignment a WHERE a.class_id=c.id AND t.id=$teacher_id AND c.teacher_id=t.id ORDER BY a.submitted DESC;";
-				return $this->db->query($sql);
+				$result=$this->db->query($sql);
+				foreach ($result->result() as $row) {
+					$folders=array();
+					$folderSql="SELECT f.id, f.label FROM folder f, folder_assignment fa WHERE f.id=fa.folder_id AND fa.assignment_id=".$row->id." ORDER BY f.label ASC;";
+					array_push($response,array("id"=>$row->id,"filepath"=>$row->filepath,"label"=>$row->label,"submitted"=>$row->submitted,"folders"=>$this->db->query($folderSql))); 
+				}
+				return $response;
 			}
 			# get folders created by this teacher
 			private function _loadFolders($teacher_id) {
