@@ -12,6 +12,7 @@ class Teachers extends CI_Controller {
 		$data['site_name']			= $this->config->item('site_name');
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': Teacher\'s Entrance';
+		$data['activeLI']			= 'teachers/assignments';
 		
 		$this->_populateBasicData($data, true);
 		
@@ -26,6 +27,7 @@ class Teachers extends CI_Controller {
 					$data['classes']	= $this->_loadClasses($this->session->userdata('id'));
 					$data['assignments']= $this->_loadAssignments($this->session->userdata('id'));
 				}
+				$data['navbar'] = $this->load->view('v_nav',$data,true);
 			} else {
 				redirect('teachers/entrance','refresh');	
 			}
@@ -44,7 +46,7 @@ class Teachers extends CI_Controller {
 			}
 				
 		# draw the views
-		private function _drawIndexView($data) {
+		private function _drawIndexView(&$data) {
 			$this->load->view('v_header', $data);
 			$this->load->view('v_teachers', $data);
 			$this->load->view('v_footer');
@@ -121,6 +123,7 @@ class Teachers extends CI_Controller {
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': '.ucfirst($action).' Assignment';
 		$data['action']				= $action;
+		$data['activeLI']			= 'teachers/assignments';		
 		
 		if ($action!="add") {
 			# MODIFY | DELETE - only one at a time for now

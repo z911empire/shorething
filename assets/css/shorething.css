@@ -84,3 +84,16 @@
      -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
 }
+
+.navbar .nav > li > a, .navbar .brand {
+	text-shadow:none;
+	color:#222;
+	font-weight:400;	
+}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
+	background-color: #F0A952;	
+	text-shadow:none;
+	color:#222;
+	font-weight:400;
+}

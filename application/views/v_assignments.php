@@ -1,11 +1,5 @@
-<div class="navbar navbar-static-top">
-    <div class="navbar-inner">
-        <a class="brand" href="#"><?php echo "$firstname $lastname"; ?></a>
-        <ul class="nav pull-right">
-            <li><a href="teachers/logout"><i class="icon-off"></i> Logout</a></li>
-        </ul>
-    </div>
-</div>
+<?php echo $navbar; ?>
+
 <div class="container">    
 	<div class="row">
 		<div class="span12">
