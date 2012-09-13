@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 05, 2012 at 11:58 PM
+-- Generation Time: Sep 12, 2012 at 11:01 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -29,11 +29,12 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `assignment` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `label` varchar(256) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT '1',
   `filepath` varchar(256) NOT NULL,
   `class_id` int(4) NOT NULL,
   `submitted` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -64,6 +65,32 @@ CREATE TABLE IF NOT EXISTS `course` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `folder`
+--
+
+CREATE TABLE IF NOT EXISTS `folder` (
+  `id` int(4) NOT NULL AUTO_INCREMENT,
+  `label` varchar(256) NOT NULL,
+  `teacher_id` int(4) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `label` (`label`,`teacher_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `folder_assignment`
+--
+
+CREATE TABLE IF NOT EXISTS `folder_assignment` (
+  `folder_id` int(4) NOT NULL,
+  `assignment_id` int(4) NOT NULL,
+  PRIMARY KEY (`folder_id`,`assignment_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `metric`
 --
 
@@ -74,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `metric` (
   `valueB` varchar(256) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 

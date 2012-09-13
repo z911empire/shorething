@@ -10,7 +10,7 @@
 		<div class="span6">
 	        <h3><?php echo ucfirst($action); ?> Assignment</h3>
             <hr/>
-            <form method="post" action="<?php echo base_url("teachers/engine"); ?>" enctype="multipart/form-data">
+            <form method="post" action="<?php echo base_url("teachers/assignmentsEngine"); ?>" enctype="multipart/form-data">
                 <label>Class</label>
                 <?php if ($action=="delete") { ?>
 					<span class="input-large uneditable-input"><?php echo $classes['label']; ?></span>                	
