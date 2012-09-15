@@ -174,7 +174,7 @@ class Teachers extends CI_Controller {
 		case "modify":
 			$assignment_id		 	= $this->input->post('assignment_id');	
 			$assignment_filepath 	= $this->input->post('filepath');
-			$this->assignment->update_assignment($assignment_id,$assignment_label,$assignment_filepath,$class_id);
+			$this->assignment->update_assignment($assignment_id,$assignment_label,1,$assignment_filepath,$class_id);
 			redirect('teachers','refresh');	
 		break;
 		case "delete":

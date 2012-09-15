@@ -38,7 +38,6 @@ class Folder extends CI_Model {
 	
 	function unmap_folder($label, $teacher_id, $assignment_id) {
 		$sql	=	"DELETE FROM folder_assignment WHERE folder_id=(SELECT id FROM folder WHERE label='$label' AND teacher_id=$teacher_id) AND assignment_id=$assignment_id;";
-		error_log($sql,0);
 		$query 	=	$this->db->query($sql);
 	}
 }

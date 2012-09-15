@@ -3,7 +3,7 @@ class Student extends CI_Model {
 
 	public function login($fullname) {
 	
-		$sql="SELECT id, firstname, lastname FROM student WHERE REPLACE(UPPER(CONCAT(firstname,lastname)),' ','') = '".strtoupper(str_replace(' ', '', $fullname))."' LIMIT 1;";
+		$sql="SELECT id, firstname, lastname FROM student WHERE REPLACE(UPPER(CONCAT(firstname,lastname)),' ','') = '".addslashes(strtoupper(str_replace(' ', '', $fullname)))."' LIMIT 1;";
 		$query = $this->db->query($sql);
 		
 		if($query->num_rows() == 1) {

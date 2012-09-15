@@ -2,6 +2,7 @@
 class Assignment extends CI_Model {
 	
 	var $label		= '';
+	var $status		= 1;
 	var $filepath	= '';
 	var $class_id	= 0;
 	var $submitted  = '';
@@ -12,6 +13,7 @@ class Assignment extends CI_Model {
 
 	function add_assignment($label, $filepath, $class_id) {
 		$this->label		=$label;
+		$this->status		=1;
 		$this->filepath		=$filepath;
 		$this->class_id		=$class_id;
 		$this->submitted	=date("Y-m-d H:i:s");
@@ -20,13 +22,14 @@ class Assignment extends CI_Model {
 	}
 	
 	function get_assignment($id) {
-		$sql	=	"SELECT a.id, a.label, a.filepath FROM assignment a WHERE a.id=$id LIMIT 1;";
+		$sql	=	"SELECT a.id, a.label, a.status, a.filepath FROM assignment a WHERE a.id=$id LIMIT 1;";
 		$query 	=	$this->db->query($sql);
 		return $query->row(0);
 	}
 	
-	function update_assignment($id, $label, $filepath, $class_id) {
+	function update_assignment($id, $label, $status, $filepath, $class_id) {
 		$this->label		=$label;
+		$this->status		=$status;
 		$this->filepath		=$filepath;
 		$this->class_id		=$class_id;
 		$this->submitted	=date("Y-m-d H:i:s");		
