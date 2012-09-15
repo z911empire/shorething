@@ -246,15 +246,25 @@ class Teachers extends CI_Controller {
 		} 
 
 		switch ($this->input->post('action')) {
+		case "delete":
+			$folder_id		 	= $this->input->post('folder_id');
+			$this->folder->delete_folder($folder_id);
+			redirect('teachers/folders','refresh');
+		break;
+		case "map":
+			$assignment_id		= $this->input->post('assignment_id');
+			$this->folder->map_folder($folder_label,$folder_teacher_id,$assignment_id);
+			echo "teachers";
+		break;	
 		case "modify":
 			$folder_id		 	= $this->input->post('folder_id');	
 			$this->folder->update_folder($folder_id,$folder_label,$folder_teacher_id);
 			redirect('teachers/folders','refresh');	
 		break;
-		case "delete":
-			$folder_id		 	= $this->input->post('folder_id');
-			$this->folder->delete_folder($folder_id);
-			redirect('teachers/folders','refresh');
+		case "unmap":
+			$assignment_id		= $this->input->post('assignment_id');
+			$this->folder->unmap_folder($folder_label,$folder_teacher_id,$assignment_id);
+			echo "teachers";
 		break;
 		default: # default is an add
 			$this->folder->add_folder($folder_label,$folder_teacher_id);

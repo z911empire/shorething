@@ -12,24 +12,41 @@
             <hr/>
 			<h3>Assignments List</h3>
 
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped table-hover table-condensed">
 				<thead>
                     <tr><th>Assignment Actions</th><th>Assignment Name</th><th>Folder</th><th>Added</th></tr>
                 </thead>
                 <tbody>
                 <?php
-                    foreach ($assignments as $row) {
+                    foreach ($assignments as $assignment) {
                         echo "<tr><td class='span3'>";
-						echo "<a class='btn btn-small' href='".base_url("upload/".$row['filepath'])."'><i class='icon-search'></i></a> ";
-						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/modify/".$row['id'])."'><i class='icon-pencil'></i></a> ";
-						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/delete/".$row['id'])."'><i class='icon-trash'></i></a>";
-						echo "<td>".$row['label']."</td>";
+						echo "<a class='btn btn-small' href='".base_url("upload/".$assignment['filepath'])."'><i class='icon-search'></i></a> ";
+						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/modify/".$assignment['id'])."'><i class='icon-pencil'></i></a> ";
+						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/delete/".$assignment['id'])."'><i class='icon-trash'></i></a>";
+						echo "<td>".$assignment['label']."</td>";
 						echo "<td class='span2'>";
-						foreach ($row['folders']->result() as $folder) {
-							echo "<span class='label label-info'>".$folder->label."</span> ";	
+						$i=0;
+						foreach ($assignment['folders']->result() as $folder) {
+							$i++;
+							echo "<div class='btn-group'><button class='btn btn-small btn-info'>".$folder->label."</button>";
+							echo "<button class='btn btn-small btn-info unmap' value='".$assignment['id']."'><i class='icon-remove icon-white'></i></button></div>";
+						}
+						if ($i==0) {
+							echo "<div class='btn-group'>";
+							echo "<a class='btn btn-small dropdown-toggle' data-toggle='dropdown' href='#'>Add to Folder &nbsp&nbsp<span class='caret'></span></a>";
+							echo "<ul class='dropdown-menu'>";
+							$j=0;
+							foreach ($folders->result() as $folderoption) {
+								$j++;
+								echo "<li><a tabindex='-1' name='".$assignment['id']."'>".$folderoption->label."</a></li>";
+							}
+							if ($j==0) {
+								echo "<li><small>&nbsp;&nbsp;No folders defined yet.</small></li>";	
+							}
+							echo "</ul></div>";	
 						}
 						echo "</td>";
-                        echo "<td class='span2'><small>".date('l, m/d/Y g:i A',strtotime($row['submitted']))."</small></td></tr>";
+                        echo "<td class='span2'><small>".date('l, m/d/Y g:i A',strtotime($assignment['submitted']))."</small></td></tr>";
                     }
                 ?>	
                 </tbody>
