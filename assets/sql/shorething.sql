@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 12, 2012 at 11:01 PM
+-- Generation Time: Sep 16, 2012 at 09:59 PM
 -- Server version: 5.5.13
 -- PHP Version: 5.3.10
 
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `assignment` (
   `id` int(8) NOT NULL AUTO_INCREMENT,
   `label` varchar(256) NOT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
+  `sequence` int(4) NOT NULL DEFAULT '1',
   `filepath` varchar(256) NOT NULL,
   `class_id` int(4) NOT NULL,
   `submitted` datetime NOT NULL,

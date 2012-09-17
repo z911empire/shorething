@@ -12,14 +12,15 @@
             <hr/>
 			<h3>Assignments List</h3>
 
-            <table class="table table-bordered table-striped table-hover table-condensed">
+            <table class="table table-bordered table-striped table-condensed">
 				<thead>
                     <tr><th>Assignment Actions</th><th>Assignment Name</th><th>Folder</th><th>Added</th></tr>
                 </thead>
                 <tbody>
                 <?php
                     foreach ($assignments as $assignment) {
-                        echo "<tr><td class='span3'>";
+                        echo "<tr id='".$assignment['id']."'><td class='span3'>";
+						echo "<a class='btn btn-small disabled sequencemover' style='cursor:move;'><i class='icon-move'></i></a> ";
 						echo "<a class='btn btn-small' href='".base_url("upload/".$assignment['filepath'])."'><i class='icon-search'></i></a> ";
 						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/modify/".$assignment['id'])."'><i class='icon-pencil'></i></a> ";
 						echo "<a class='btn btn-small' href='".base_url("teachers/assignments/delete/".$assignment['id'])."'><i class='icon-trash'></i></a>";

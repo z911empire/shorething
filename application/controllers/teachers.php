@@ -43,7 +43,7 @@ class Teachers extends CI_Controller {
 			# get assignments for this teacher
 			private function _loadAssignments($teacher_id) {
 				$response=array();
-				$sql	= "SELECT a.id, a.label, a.filepath, DATE_ADD(a.submitted, INTERVAL ".$this->config->item('time_add')." HOUR) AS submitted, t.firstname, t.lastname FROM class c, teacher t, assignment a WHERE a.class_id=c.id AND t.id=$teacher_id AND c.teacher_id=t.id ORDER BY a.submitted DESC;";
+				$sql	= "SELECT a.id, a.label, a.filepath, DATE_ADD(a.submitted, INTERVAL ".$this->config->item('time_add')." HOUR) AS submitted, t.firstname, t.lastname FROM class c, teacher t, assignment a WHERE a.class_id=c.id AND t.id=$teacher_id AND c.teacher_id=t.id ORDER BY a.sequence, a.submitted DESC;";
 				$result=$this->db->query($sql);
 				foreach ($result->result() as $row) {
 					$folders=array();
@@ -160,23 +160,19 @@ class Teachers extends CI_Controller {
 	public function assignmentsEngine() {
 		$this->load->model('assignment','',TRUE);
 		$this->load->library('form_validation');
-
+		
+		$action 				= $this->input->post('action');
 		$class_id 				= $this->input->post('class_id');
 		$assignment_label 		= $this->input->post('assignment_label');
+	
 		$this->form_validation->set_rules('assignment_label', 'Assignment Name', 'trim|required|xss_clean');
 
-		# validate the label and class
-		if ($this->form_validation->run() == FALSE) {
+		# validate the label and class if it's an 'add' or a 'modify'
+		if ((!isset($action) || $action=="modify") && $this->form_validation->run() == FALSE) {
 			echo validation_errors();
 		} 
 
-		switch ($this->input->post('action')) {
-		case "modify":
-			$assignment_id		 	= $this->input->post('assignment_id');	
-			$assignment_filepath 	= $this->input->post('filepath');
-			$this->assignment->update_assignment($assignment_id,$assignment_label,1,$assignment_filepath,$class_id);
-			redirect('teachers','refresh');	
-		break;
+		switch ($action) {
 		case "delete":
 			$assignment_id		 	= $this->input->post('assignment_id');
 			$assignment_filepath 	= $this->input->post('filepath');
@@ -186,6 +182,23 @@ class Teachers extends CI_Controller {
 			}
 			redirect('teachers','refresh');
 		break;
+		case "makelast":
+			$mover_id				= $this->input->post('mover_id');
+			$this->assignment->makelast_assignment($mover_id);
+			echo "teachers";
+		break;
+		case "modify":
+			$assignment_id		 	= $this->input->post('assignment_id');	
+			$assignment_filepath 	= $this->input->post('filepath');
+			$this->assignment->update_assignment($assignment_id,$assignment_label,1,$assignment_filepath,$class_id);
+			redirect('teachers','refresh');	
+		break;
+		case "reorder":
+			$mover_id				= $this->input->post('mover_id');
+			$moved_id				= $this->input->post('moved_id');
+			$this->assignment->reorder_assignments($mover_id, $moved_id);
+			echo "teachers";
+		break;
 		default: # default is an add
 			$config['upload_path'] 		= './upload/';
 			$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|pptx|txt|jpeg|jpg|bmp|gif|png';
@@ -193,7 +206,7 @@ class Teachers extends CI_Controller {
 	
 			$this->load->library('upload',$config);
 			if (!$this->upload->do_upload("assignment_filepath")) {
-				print_r($this->upload->display_errors());
+				print_r($this->upload->display_errors()); # need to handle this.
 			} 
 	
 			$upload_data = $this->upload->data();	

@@ -54,7 +54,7 @@ class Students extends CI_Controller {
 				$sql= 	"SELECT a.label, a.filepath, a.submitted ".
 						"FROM assignment a, class c ".
 						"WHERE a.class_id=c.id AND c.id=$class_id ".
-						"ORDER BY a.submitted DESC";
+						"ORDER BY a.sequence, a.submitted DESC";
 				$result	= $this->db->query($sql);
 
 				foreach ($result->result() as $row) {
