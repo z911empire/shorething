@@ -26,7 +26,7 @@ class Folder extends CI_Model {
 	}
 	
 	function map_folder($label, $teacher_id, $assignment_id) {
-		$sql	=	"INSERT INTO folder_assignment VALUES((SELECT id FROM folder WHERE label='$label' AND teacher_id=$teacher_id),$assignment_id);";
+		$sql	=	"INSERT INTO folder_assignment VALUES((SELECT id FROM folder WHERE label='".addslashes($label)."' AND teacher_id=$teacher_id),$assignment_id);";
 		$query 	=	$this->db->query($sql);
 	}
 	
@@ -37,7 +37,7 @@ class Folder extends CI_Model {
 	}
 	
 	function unmap_folder($label, $teacher_id, $assignment_id) {
-		$sql	=	"DELETE FROM folder_assignment WHERE folder_id=(SELECT id FROM folder WHERE label='$label' AND teacher_id=$teacher_id) AND assignment_id=$assignment_id;";
+		$sql	=	"DELETE FROM folder_assignment WHERE folder_id=(SELECT id FROM folder WHERE label='".addslashes($label)."' AND teacher_id=$teacher_id) AND assignment_id=$assignment_id;";
 		$query 	=	$this->db->query($sql);
 	}
 }

@@ -10,6 +10,13 @@
 		<div class="span4">
 	        <h3><?php echo ucfirst($action); ?> Folder</h3>
             <hr/>
+            <?php if (strlen(validation_errors())) { ?>
+            <div class="alert alert-error">
+            	<button type="button" class="close" data-dismiss="alert">&times;</button>
+            	<?php echo validation_errors(); ?>
+            </div>
+            <?php } ?>            
+            
             <form method="post" action="<?php echo base_url("teachers/foldersEngine"); ?>">
                 <label>Folder</label>
                 <?php if ($action=="delete") { ?>

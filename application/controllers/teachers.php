@@ -232,6 +232,7 @@ class Teachers extends CI_Controller {
 ***********************************/
 	
 	public function folders($action="add", $id=-1) { 
+		$this->load->library('form_validation');
 		$data['site_name']			= $this->config->item('site_name');
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': '.ucfirst($action).' Folder';
@@ -261,16 +262,23 @@ class Teachers extends CI_Controller {
 		$this->load->model('folder','',TRUE);
 		$this->load->library('form_validation');
 
+		$action 			= ($this->input->post('action')) ? $this->input->post('action') : "add";
 		$folder_label 		= $this->input->post('folder_label');
 		$folder_teacher_id	= $this->session->userdata('id');
 		$this->form_validation->set_rules('folder_label', 'Folder Name', 'trim|required|xss_clean');
+		# need multiple tables for is_unique
 		
 		# validate the label and class
-		if ($this->form_validation->run() == FALSE) {
-			echo validation_errors();
+		if (($action=="add" || $action=="modify") && $this->form_validation->run() == FALSE) {
+			$this->folders($action, $this->input->post('folder_id'));
+			return false;
 		} 
 
-		switch ($this->input->post('action')) {
+		switch ($action) {
+		case "add":
+			$this->folder->add_folder($folder_label,$folder_teacher_id);
+			redirect('teachers/folders','refresh');			
+		break;
 		case "delete":
 			$folder_id		 	= $this->input->post('folder_id');
 			$this->folder->delete_folder($folder_id);
@@ -290,10 +298,7 @@ class Teachers extends CI_Controller {
 			$assignment_id		= $this->input->post('assignment_id');
 			$this->folder->unmap_folder($folder_label,$folder_teacher_id,$assignment_id);
 			echo "teachers";
-		break;
-		default: # default is an add
-			$this->folder->add_folder($folder_label,$folder_teacher_id);
-			redirect('teachers/folders','refresh');	
+		break;			
 		}	
 	}
 	
