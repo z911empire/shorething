@@ -132,6 +132,8 @@ class Teachers extends CI_Controller {
 *************************************/
 
 	public function assignments($action, $id=-1) { 
+		$this->load->library('form_validation');
+		
 		$data['site_name']			= $this->config->item('site_name');
 		$data['site_tagline']		= $this->config->item('site_tagline');		
 		$data['title']				= $data['site_name'].': '.ucfirst($action).' Assignment';
@@ -161,18 +163,28 @@ class Teachers extends CI_Controller {
 		$this->load->model('assignment','',TRUE);
 		$this->load->library('form_validation');
 		
-		$action 				= $this->input->post('action');
+		$action 				= ($this->input->post('action')) ? $this->input->post('action') : "add";
 		$class_id 				= $this->input->post('class_id');
 		$assignment_label 		= $this->input->post('assignment_label');
 	
 		$this->form_validation->set_rules('assignment_label', 'Assignment Name', 'trim|required|xss_clean');
+		
+		if ($action=="add") {
+			$this->form_validation->set_rules('assignment_filepath', 'Assignment File','callback_verify_upload');
+		}
 
 		# validate the label and class if it's an 'add' or a 'modify'
-		if ((!isset($action) || $action=="modify") && $this->form_validation->run() == FALSE) {
-			echo validation_errors();
+		if (($action=="add" || $action=="modify") && $this->form_validation->run() == FALSE) {
+			$this->assignments($action, $this->input->post('assignment_id'));
+			return false;
 		} 
 
 		switch ($action) {
+		case "add":
+			$upload_data = $this->upload->data();
+			$this->assignment->add_assignment($assignment_label,$upload_data['file_name'],$class_id);
+			redirect('teachers','refresh');			
+		break;
 		case "delete":
 			$assignment_id		 	= $this->input->post('assignment_id');
 			$assignment_filepath 	= $this->input->post('filepath');
@@ -189,8 +201,7 @@ class Teachers extends CI_Controller {
 		break;
 		case "modify":
 			$assignment_id		 	= $this->input->post('assignment_id');	
-			$assignment_filepath 	= $this->input->post('filepath');
-			$this->assignment->update_assignment($assignment_id,$assignment_label,1,$assignment_filepath,$class_id);
+			$this->assignment->update_assignment($assignment_id,$assignment_label);
 			redirect('teachers','refresh');	
 		break;
 		case "reorder":
@@ -199,21 +210,22 @@ class Teachers extends CI_Controller {
 			$this->assignment->reorder_assignments($mover_id, $moved_id);
 			echo "teachers";
 		break;
-		default: # default is an add
+		}
+	}
+		public function verify_upload($assignment_filepath) {
 			$config['upload_path'] 		= './upload/';
 			$config['allowed_types'] 	= 'pdf|doc|docx|xls|xlsx|ppt|pptx|txt|jpeg|jpg|bmp|gif|png';
 			# $config['max_size'] 		= 0; # 0 = no limit, defined in web server config (php.ini)
 	
 			$this->load->library('upload',$config);
 			if (!$this->upload->do_upload("assignment_filepath")) {
-				print_r($this->upload->display_errors()); # need to handle this.
-			} 
-	
-			$upload_data = $this->upload->data();	
-			$this->assignment->add_assignment($assignment_label,$upload_data['file_name'],$class_id);
-			redirect('teachers','refresh');	
-		}	
-	}
+				$this->form_validation->set_message('verify_upload', $this->upload->display_errors());
+				return false;		
+			} else {
+				return true;
+			}
+			#$upload_data = $this->upload->data();	
+		}
 	
 /**********************************
 *            FOLDERS

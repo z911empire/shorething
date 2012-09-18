@@ -65,14 +65,9 @@ class Assignment extends CI_Model {
 		$query 	=	$this->db->query($sql);
 	}
 	
-	function update_assignment($id, $label, $status, $filepath, $class_id) {
-		$this->label		=$label;
-		$this->status		=$status;
-		$this->filepath		=$filepath;
-		$this->class_id		=$class_id;
-		$this->submitted	=date("Y-m-d H:i:s");		
-		
-		$this->db->update('assignment',$this,array('id'=>$id));
+	function update_assignment($id, $label) {
+		$sql	=	"UPDATE assignment SET label='".$label."', submitted=NOW() WHERE id=$id;";
+		$query 	=	$this->db->query($sql);
 	}
 	
 	function delete_assignment($id) {

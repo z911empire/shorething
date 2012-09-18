@@ -101,3 +101,5 @@
 .sequencemover {
 	cursor:move;	
 }
+
+.alert-error p { margin-bottom:0; }
