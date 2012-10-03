@@ -33,6 +33,21 @@
 								echo "<td><a href='upload/".$assignment['assignment_filepath']."'>";
 								echo $assignment['assignment_label']."</a></td></tr>";
                         	} ?>
+                    	<tr><td colspan="2">
+                        	<ul class="pager">
+                                <li class="previous disabled"><a id="" href="#">&larr; Newer</a></li>
+                                <?php 
+									if ($class['assignment_count']==count($all_assignments[$class['class_id']])) {
+										$idnext			= "";
+										$disablenext 	=  "disabled";
+									} else {
+										$idnext 		= $class['class_id']."|1|".$class['assignment_count'];	
+										$disablenext	= "";
+									}
+                                	echo "<li class='next $disablenext'><a id='$idnext' href='#'>Older &rarr;</a></li>";
+								?>
+                           	</ul>
+                    	</td></tr>
                     </tbody>
                 </table>
             </div>

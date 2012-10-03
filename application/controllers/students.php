@@ -32,10 +32,13 @@ class Students extends CI_Controller {
 			# get all the classes this student attends
 			private function _loadAllClasses($student_id) {
 				$all_classes=array();
-				$sql= 	"SELECT c.id AS 'class_id', co.label, t.lastname, t.gender ".
+				$sql=	"SELECT A.*, COUNT(B.id) AS 'assignment_count' FROM ".
+						"(SELECT c.id AS 'class_id', co.label, t.lastname, t.gender ".
 						"FROM course co, class c, student_class sc, teacher t ".
-						"WHERE co.id=c.course_id AND t.id=c.teacher_id AND sc.class_id=c.id AND sc.student_id=$student_id ".
-						"ORDER BY co.label";
+						"WHERE co.id=c.course_id AND t.id=c.teacher_id AND sc.class_id=c.id ".
+						" AND sc.student_id=$student_id) A ".
+						"LEFT JOIN assignment B ON A.class_id=B.class_id ".
+						"GROUP BY A.class_id ORDER BY A.label;";
 				$result	= $this->db->query($sql);
 
 				foreach ($result->result() as $row) {
@@ -43,25 +46,26 @@ class Students extends CI_Controller {
 						array('class_id'			=>$row->class_id, 
 							  'course_label'		=>$row->label, 
 							  'teacher_lastname'	=>$row->lastname, 
-							  'teacher_gender'		=>$row->gender)
+							  'teacher_gender'		=>$row->gender,
+							  'assignment_count'	=>$row->assignment_count)
 					);
 				}
 				return $all_classes;
 			}
 			# get all the assignments for each class this student attends
 			private function _loadClassAssignments($class_id) {
+				$pagesize = $this->config->item('student_pagesize');
 				$class_assignments=array();
 				$sql= 	"SELECT a.label, a.filepath, a.submitted ".
 						"FROM assignment a, class c ".
 						"WHERE a.class_id=c.id AND c.id=$class_id ".
-						"ORDER BY a.sequence, a.submitted DESC";
+						"ORDER BY a.sequence, a.submitted DESC LIMIT 0, $pagesize;";
 				$result	= $this->db->query($sql);
 
 				foreach ($result->result() as $row) {
 					array_push($class_assignments,
 						array('assignment_label'	=>$row->label, 
-							  'assignment_filepath'	=>$row->filepath, 
-							  'assignment_submitted'=>$row->submitted)
+							  'assignment_filepath'	=>$row->filepath)
 					);
 				}
 				return $class_assignments;
@@ -73,7 +77,36 @@ class Students extends CI_Controller {
 			$this->load->view('v_students', $data);
 			$this->load->view('v_footer');
 		}
-	
+		
+	public function studentPagingEngine() {
+		$pagesize 				= $this->config->item('student_pagesize');
+		$direction 				= $this->input->post('direction');
+		$class_id 				= $this->input->post('class_id');
+		$page					= $this->input->post('page');
+		
+		$newoffset = ($direction=="next") ? $page * $pagesize : ($page-2) * $pagesize;
+		
+		$class_assignments=array();
+		$sql= 	"SELECT a.label, a.filepath, a.submitted ".
+				"FROM assignment a, class c ".
+				"WHERE a.class_id=c.id AND c.id=$class_id ".
+				"ORDER BY a.sequence, a.submitted DESC LIMIT $newoffset, $pagesize;";
+				$result	= $this->db->query($sql);
+
+		foreach ($result->result() as $row) {
+			array_push($class_assignments,
+				array('assignment_label'	=>$row->label, 
+					  'assignment_filepath'	=>$row->filepath)
+			);
+		}
+		
+		echo json_encode($class_assignments);
+	}
+
+/************************************
+*            AUTHENTICATION
+*************************************/
+
 	# students/entrance (STUDENT LOGIN PAGE)
 	public function entrance() {
 		$this->load->library('form_validation');		

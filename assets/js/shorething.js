@@ -3,10 +3,11 @@ $(document).ready(function(){
 	prepareAssignmentDrags();						   
 	prepareFolderMapButtons();						   
 	prepareFolderUnmapButtons();
+	prepareStudentPagers();
 });
 
 function prepareAssignmentDrags() {
-	$('tbody tr').draggable({ 
+	$('#teacherassignments tr').draggable({ 
 		cursor: 'move',
 		cursorAt: { top: -5, left: -5 }, 
 		handle: ".sequencemover",
@@ -62,6 +63,7 @@ function prepareAssignmentDrags() {
 		$(ui.helper).removeClass('alert-success').addClass('alert-info');						
 	};
 				
+
 function prepareFolderMapButtons() {
 	$('ul.dropdown-menu li a').click(function() {
 		$.post(baseurl+"teachers/foldersEngine", 
@@ -81,13 +83,52 @@ function prepareFolderUnmapButtons() {
 	});
 }
 
-/* -------------------------- utility functions -------------------------- */
-
-function enableKeyCode(obj, f, actionKeyCode) {
-	$(obj).bind('keydown', function(e) {
-		var code = (e.keyCode ? e.keyCode : e.which);
-		if (code == actionKeyCode) {
-			f();
-		}
-	}); // that...is nice.
+function prepareStudentPagers() {
+	$('ul.pager li a').click(function() {
+		var thisa = $(this);
+		if ($(this).parent().hasClass('disabled')) { return false; }
+		// get next or previous
+		var dir = $(this).parent().hasClass('next') ? "next" : "previous" ;
+		// decompose the pipe-separated variable
+		var pagevar = $(this).attr('id').split('|');
+		
+		$.post(baseurl+"students/studentPagingEngine", 
+			   { direction:dir, class_id: pagevar[0], page: pagevar[1] },
+			function(s) {
+				var tbody = $(thisa).closest('tbody');
+				// determine the number of tr's to get the pagesize variable
+				var pagesize = $('tr', $(tbody)).length-1;
+			
+				$(tbody).empty();
+				$.each(s, function(i,a) {
+					
+					// instead of typing the HTML here, use a view to return a string!
+					$(tbody).append("<tr><td><a class='btn btn-small' href='upload/" + 
+									a.assignment_filepath + "'> <i class='icon-file'></i></a></td>" +
+									"<td><a href='upload/" + a.assignment_filepath + "'>" +
+									a.assignment_label + "</a></td></tr>");	
+				});
+				
+				curpage				= (dir=='next') ? parseInt(pagevar[1])+1 : parseInt(pagevar[1])-1;
+				idnext				= pagevar[0]+"|"+curpage+"|"+pagevar[2];
+				idprevious			= pagevar[0]+"|"+curpage+"|"+pagevar[2];
+				var disablenext 	= '';
+				var disableprevious	= '';
+				
+				if (dir=='previous' && pagevar[1]=='2') {
+					disableprevious	='disabled';
+				} else if (dir=='next' && s.length<pagesize) {
+					disablenext		='disabled';
+				}
+								
+				$(tbody).append("<tr><td colspan='2'><ul class='pager'>"+
+								"<li class='previous " + disableprevious + "'><a id='" + idprevious + 
+								"' href='#'>&larr; Newer</a></li><li class='next " + disablenext + 
+								"'><a id='" + idnext + "' href='#'>&rarr; Older</a></li>"+
+								"</ul></td></tr>");
+				$('ul.pager li a').unbind('click');
+				prepareStudentPagers();
+		}, "json");
+		return false;
+	});	
 }

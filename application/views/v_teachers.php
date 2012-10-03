@@ -16,7 +16,7 @@
 				<thead>
                     <tr><th>Assignment Actions</th><th>Assignment Name</th><th>Folder</th><th>Added</th></tr>
                 </thead>
-                <tbody>
+                <tbody id="teacherassignments">
                 <?php
                     foreach ($assignments as $assignment) {
                         echo "<tr id='".$assignment['id']."'><td class='span3'>";
