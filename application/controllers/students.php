@@ -17,7 +17,7 @@ class Students extends CI_Controller {
 	}
 		# do basic user auth and start populating $data
 		private function _populateBasicData(&$data) {
-			if ($this->session->userdata('logged_in')) {			
+			if ($this->session->userdata('logged_in') && $this->session->userdata('role')=='student') {			
 				$data['firstname'] 			= $this->session->userdata('firstname');
 				$data['lastname'] 			= $this->session->userdata('lastname');			
 				$data['all_classes']		= $this->_loadAllClasses($this->session->userdata('id'));
@@ -33,7 +33,7 @@ class Students extends CI_Controller {
 			private function _loadAllClasses($student_id) {
 				$all_classes=array();
 				$sql=	"SELECT A.*, COUNT(B.id) AS 'assignment_count' FROM ".
-						"(SELECT c.id AS 'class_id', co.label, t.lastname, t.gender ".
+						"(SELECT c.id AS 'class_id', co.label, t.lastname, t.gender, t.email ".
 						"FROM course co, class c, student_class sc, teacher t ".
 						"WHERE co.id=c.course_id AND t.id=c.teacher_id AND sc.class_id=c.id ".
 						" AND sc.student_id=$student_id) A ".
@@ -47,6 +47,7 @@ class Students extends CI_Controller {
 							  'course_label'		=>$row->label, 
 							  'teacher_lastname'	=>$row->lastname, 
 							  'teacher_gender'		=>$row->gender,
+							  'teacher_email'		=>$row->email,
 							  'assignment_count'	=>$row->assignment_count)
 					);
 				}
@@ -166,7 +167,8 @@ class Students extends CI_Controller {
 				$sess_array = array(
 					'id'		=> $row->id,
 					'firstname'	=> $row->firstname,
-					'lastname'	=> $row->lastname,				
+					'lastname'	=> $row->lastname,	
+					'role'		=> 'student',
 					'logged_in'	=> true
 				);
 			}

@@ -24,7 +24,7 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                     	<tr><th colspan="2"><?php echo $class['course_label']; ?> &middot; 
-							<span class="muted"><?php echo ($class['teacher_gender']=='F') ? "Ms. " : "Mr. "; echo $class['teacher_lastname']; ?></span></th></tr>
+							<span class="muted"><?php echo ($class['teacher_gender']=='F') ? "Ms. " : "Mr. "; echo $class['teacher_lastname']; ?></span> <?php if (strlen($class['teacher_email'])) { echo "(<a target='_blank' href='mailto:".$class['teacher_email']."'>email</a>)"; } ?></th></tr>
                     </thead>
                     <tbody>
                     	<?php foreach ($all_assignments[$class['class_id']] as $assignment) {
